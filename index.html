@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Стандартный шаблон виджета — прототип</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Набор иконок. Это временные SVG вместо шрифта cbuc-icons из макета. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M14.5 6 8.5 12l6 6"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><g transform="translate(2 2) scale(.833)"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></g></symbol>
+    <symbol id="i-move" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16M12 4l-2.2 2.4M12 4l2.2 2.4M12 20l-2.2-2.4M12 20l2.2-2.4M4 12l2.4-2.2M4 12l2.4 2.2M20 12l-2.4-2.2M20 12l-2.4 2.2"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M9.5 7V5h5v2M6.5 7l.9 12h9.2l.9-12M10 11l4 4.5M14 11l-4 4.5"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><g stroke="none" fill="currentColor"><circle cx="5.5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="18.5" cy="12" r="1.7"/></g></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 6 4.5 10.5 9 15M5 10.5h9a4.5 4.5 0 0 1 0 9h-3"/></symbol>
+    <symbol id="i-redo" viewBox="0 0 24 24"><path d="M15 6l4.5 4.5L15 15M19 10.5h-9a4.5 4.5 0 0 0 0 9h3"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M19.5 12a7.5 7.5 0 1 1-2.4-5.5M19.5 4.5v4h-4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 16 16"><path d="M3 8.5l3.4 3.4L13 4.6"/></symbol>
+    <symbol id="i-chev-right" viewBox="0 0 12 12"><path d="M4.5 2.5L8 6l-3.5 3.5"/></symbol>
+    <symbol id="i-chev-thin" viewBox="0 0 16 16"><path d="M6.5 3.5 10 8l-3.5 4.5"/></symbol>
+    <symbol id="i-pad-hor" viewBox="0 0 12 12"><path d="M.5 1v10M11.5 1v10"/><rect x="3" y="3" width="6" height="6" rx="2"/></symbol>
+    <symbol id="i-pad-vert" viewBox="0 0 12 12"><path d="M1 .5h10M1 11.5h10"/><rect x="3" y="3" width="6" height="6" rx="2"/></symbol>
+    <symbol id="i-corners" viewBox="0 0 12 12"><path d="M1 4V2.5A1.5 1.5 0 0 1 2.5 1H4M8 1h1.5A1.5 1.5 0 0 1 11 2.5V4M11 8v1.5A1.5 1.5 0 0 1 9.5 11H8M4 11H2.5A1.5 1.5 0 0 1 1 9.5V8"/></symbol>
+    <symbol id="i-eyedropper" viewBox="0 0 16 16"><path d="M10.2 2.3a1.7 1.7 0 0 1 2.4 0l1.1 1.1a1.7 1.7 0 0 1 0 2.4l-2 2-3.5-3.5zM8.2 4.3l3.5 3.5M7.7 6.4 2.6 11.5a1 1 0 0 0-.3.7l-.1 1.6 1.6-.1a1 1 0 0 0 .7-.3l5.1-5.1"/></symbol>
+    <symbol id="i-close" viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 4.5v15M4.5 12h15"/></symbol>
+    <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="6.5" ry="2.8"/><path d="M5.5 6v12c0 1.5 2.9 2.8 6.5 2.8s6.5-1.3 6.5-2.8V6M5.5 12c0 1.5 2.9 2.8 6.5 2.8s6.5-1.3 6.5-2.8"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3.5l8.5 4.5-8.5 4.5L3.5 8zM3.5 12l8.5 4.5 8.5-4.5M3.5 16l8.5 4.5 8.5-4.5"/></symbol>
+    <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4.5 5.5h15l-5.7 7.2v5.8l-3.6-1.8v-4z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5.5 4h3.3l1.8 4.5-2.2 1.4a11 11 0 0 0 5.2 5.2l1.4-2.2 4.5 1.8v3.3a1.8 1.8 0 0 1-1.9 1.8A15.5 15.5 0 0 1 3.7 5.9 1.8 1.8 0 0 1 5.5 4z"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20.5 11.5a7.5 7.5 0 0 1-11 6.6L4.5 19.5l1.3-4.2a7.5 7.5 0 1 1 14.7-3.8z"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><path d="M9.2 9.2a2.9 2.9 0 1 1 4.1 2.6c-.8.4-1.3 1-1.3 1.9M12 17.2h.01"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 14 14"><rect x="1.5" y="2" width="11" height="7.5" rx="1"/><path d="M5 12h4M7 9.5V12"/></symbol>
+    <symbol id="i-phone-v" viewBox="0 0 14 14"><rect x="4" y="1.5" width="6" height="11" rx="1.2"/><path d="M6.4 10.8h1.2"/></symbol>
+  </defs>
+</svg>
+
+<div class="app">
+
+  <!-- Шапка -->
+  <header class="header">
+    <div class="header__left">Главная страница</div>
+
+    <div class="device-switch" role="group" aria-label="Размер экрана">
+      <button class="device-switch__btn is-active" type="button" title="Монитор (1280+)">
+        <i class="gl g14" aria-hidden="true">&#xE730;</i>
+      </button>
+      <button class="device-switch__btn" type="button" title="Телефон (478 и ниже)">
+        <i class="gl g14" aria-hidden="true">&#xE637;</i>
+      </button>
+      <button class="device-switch__btn" type="button" title="Ещё">
+        <i class="gl g14" aria-hidden="true">&#xEAB4;</i>
+      </button>
+    </div>
+
+    <div class="header__right">
+      <div class="commands">
+        <button class="icon-btn icon-btn--32 is-muted" type="button" title="Повторить"><i class="gl g20" aria-hidden="true">&#xE6CA;</i></button>
+        <button class="icon-btn icon-btn--32 is-muted" type="button" title="Отменить"><i class="gl g20" aria-hidden="true">&#xE6CF;</i></button>
+        <button class="icon-btn icon-btn--32 is-muted" type="button" title="Сброс"><i class="gl g20" aria-hidden="true">&#xE629;</i></button>
+      </div>
+      <button class="close-btn" type="button" title="Закрыть"><svg class="ico ico--12"><use href="#i-close"/></svg></button>
+    </div>
+  </header>
+
+  <!-- Рабочая область -->
+  <div class="content">
+    <div class="screens">
+      <div class="dashboard">
+
+        <!-- Основной размер -->
+        <div class="main">
+          <div class="row row--edit">
+            <div class="widget widget--blue">
+              <div class="sk-title"><i class="sk-title__marker"></i></div>
+              <div class="sk-block"></div>
+            </div>
+
+            <!-- Выбранный виджет -->
+            <div class="widget-selected" id="widget-selected">
+              <div class="widget-selected__body">
+                <div class="widget-selected__header">
+                  <h2>Заголовок виджета</h2>
+                  <i class="widget-selected__marker"></i>
+                </div>
+                <div class="widget-selected__content">
+                  <i class="bar" style="width:246px"></i>
+                  <i class="bar" style="width:145px"></i>
+                  <i class="bar" style="width:204px"></i>
+                </div>
+              </div>
+
+
+              <!-- Общее окно настроек виджета: три вида (Figma 10404:76435, 10404:78226, 10404:76570) -->
+              <section class="settings" id="settings-panel" role="dialog" aria-label="Окно настроек виджета" data-view="main" hidden>
+
+                <!-- Вид 1: общее окно -->
+                <div class="settings__view" data-view-name="main">
+                  <div class="settings__head">
+                    <label class="settings__name">
+                      <input class="settings__title" type="text" value="Заголовок виджета" aria-label="Заголовок виджета" size="17">
+                    </label>
+                    <div class="settings__cmds">
+                    <button class="s-btn24 s-reset-btn" type="button" title="Сбросить"><i class="gl g24 s-reset" aria-hidden="true">&#xE629;</i></button>
+                    <button class="s-ok js-settings-save" type="button" title="Сохранить и выйти"><i class="gl g16" aria-hidden="true">&#xE75E;</i></button>
+                    <button class="s-btn24 s-close js-settings-close" type="button" title="Закрыть"><i class="gl g24" aria-hidden="true">&#xE66C;</i></button>
+                  </div>
+                  </div>
+                  <div class="settings__clouds">
+                    <div class="s-stub">Уникальные свойства виджета</div>
+                    <div class="s-card">
+                      <div class="s-line">
+                        <span class="s-label">Высота</span>
+                        <div class="s-editor">
+                          <button class="s-link js-height" id="height-link" type="button" aria-haspopup="listbox">Заполнить</button>
+                          <button class="s-arrow js-open-size" type="button" title="Размер: расширенные настройки"><svg class="ico ico--16"><use href="#i-chev-thin"/></svg></button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="s-card s-card--style">
+                      <button class="s-arrow s-arrow--abs js-open-style" type="button" title="Стиль: расширенные настройки"><svg class="ico ico--16"><use href="#i-chev-thin"/></svg></button>
+                      <div class="s-line">
+                        <span class="s-label">Стиль</span>
+                        <button class="s-link js-style-link" id="style-link" type="button" aria-haspopup="dialog">Заголовок внутри виджета</button>
+                      </div>
+                      <div class="s-colors">
+                        <div class="s-color"><span class="s-label s-label--bg">Фон</span><span class="s-swatch-btn"><button class="color-btn" type="button" data-color-target="bg" title="Выбор цвета"><i class="swatch swatch--white"></i></button><button class="s-x js-color-reset" type="button" title="Сбросить цвет"><i class="gl g16" aria-hidden="true">&#xE66C;</i></button></span></div>
+                        <div class="s-color"><span class="s-label">Заголовок</span><span class="s-swatch-btn"><button class="color-btn" type="button" data-color-target="title" title="Выбор цвета"><i class="swatch swatch--black"></i></button><button class="s-x js-color-reset" type="button" title="Сбросить цвет"><i class="gl g16" aria-hidden="true">&#xE66C;</i></button></span></div>
+                        <div class="s-color"><span class="s-label s-label--m">Маркер</span><span class="s-swatch-btn"><button class="color-btn" type="button" data-color-target="marker" title="Выбор цвета"><i class="swatch swatch--blue"></i></button><button class="s-x js-color-reset" type="button" title="Сбросить цвет"><i class="gl g16" aria-hidden="true">&#xE66C;</i></button></span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Вид 2: провал «Размер» -->
+                <div class="settings__view" data-view-name="size" hidden>
+                  <div class="settings__head">
+                  <button class="s-back js-settings-back" type="button" title="Назад в общее окно"><i class="gl g16" aria-hidden="true">&#xEB9E;</i></button>
+                  <div class="settings__name settings__name--static"><span class="settings__stitle">Размер</span></div>
+                  <div class="settings__cmds">
+                    <button class="s-btn24 s-reset-btn is-muted" type="button" title="Сбросить"><i class="gl g24 s-reset" aria-hidden="true">&#xE629;</i></button>
+                    <button class="s-ok" type="button" title="Сохранить и выйти"><i class="gl g16" aria-hidden="true">&#xE75E;</i></button>
+                    <button class="s-btn24 s-close js-settings-close" type="button" title="Закрыть"><i class="gl g24" aria-hidden="true">&#xE66C;</i></button>
+                  </div>
+                </div>
+                  <div class="settings__clouds">
+                    <div class="s-card s-card--cols">
+                      <div class="s-cols">
+                        <div class="s-col s-col--labels s-col--w">
+                          <span class="s-label s-label--w54">Ширина</span>
+                          <span class="s-label">Высота</span>
+                        </div>
+                        <div class="s-col s-col--values">
+                          <div class="s-field s-field--130"><span class="s-ph">557</span><button class="s-link s-ulink" type="button">заполнить</button></div>
+                          <div class="s-field s-field--130"><span class="s-ph">280</span><button class="s-link s-ulink" type="button" id="size-height-val">заполнить</button></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="s-card s-card--pad">
+                      <div class="s-h15">Отступы</div>
+                      <div class="s-prow" id="pad-row">
+                        <span class="s-label s-label--pad">Внутренние</span>
+                        <div class="s-pfields" id="pad-short"><label class="s-field s-field--56"><svg class="ico ico--12 s-pad-ico"><use href="#i-pad-hor"/></svg><input class="s-pin" data-pad="h" value="12" inputmode="numeric" maxlength="2" aria-label="Горизонтальные"></label><label class="s-field s-field--56"><svg class="ico ico--12 s-pad-ico"><use href="#i-pad-vert"/></svg><input class="s-pin" data-pad="v" value="12" inputmode="numeric" maxlength="2" aria-label="Вертикальные"></label></div>
+                        <div class="s-pbox" id="pad-box" hidden>
+                          <label class="s-pb s-pb--t"><input class="s-pin" data-pad="t" value="12" inputmode="numeric" maxlength="2" aria-label="Сверху"></label>
+                          <label class="s-pb s-pb--l"><input class="s-pin" data-pad="l" value="12" inputmode="numeric" maxlength="2" aria-label="Слева"></label>
+                          <label class="s-pb s-pb--r"><input class="s-pin" data-pad="r" value="12" inputmode="numeric" maxlength="2" aria-label="Справа"></label>
+                          <label class="s-pb s-pb--b"><input class="s-pin" data-pad="b" value="12" inputmode="numeric" maxlength="2" aria-label="Снизу"></label>
+                        </div>
+                        <button class="s-link-ico js-pad-toggle" type="button" title="Задать отступы по сторонам" aria-pressed="false"><i class="gl g24" aria-hidden="true">&#xEBCE;</i></button>
+                      </div>
+                      <div class="s-prow" id="pad-row-out">
+                        <span class="s-label s-label--pad">Внешние</span>
+                        <div class="s-pfields" id="pad-short-out"><div class="s-field s-field--56"><svg class="ico ico--12 s-pad-ico"><use href="#i-pad-hor"/></svg><span class="s-num">0</span></div><div class="s-field s-field--56"><svg class="ico ico--12 s-pad-ico"><use href="#i-pad-vert"/></svg><span class="s-num">0</span></div></div>
+                        <div class="s-pbox" id="pad-box-out" hidden>
+                          <label class="s-pb s-pb--t"><input class="s-pin" value="0" readonly aria-label="Сверху"></label>
+                          <label class="s-pb s-pb--l"><input class="s-pin" value="0" readonly aria-label="Слева"></label>
+                          <label class="s-pb s-pb--r"><input class="s-pin" value="0" readonly aria-label="Справа"></label>
+                          <label class="s-pb s-pb--b"><input class="s-pin" value="0" readonly aria-label="Снизу"></label>
+                        </div>
+                        <button class="s-link-ico js-pad-toggle-out" type="button" title="Задать отступы по сторонам" aria-pressed="false"><i class="gl g24" aria-hidden="true">&#xEBCE;</i></button>
+                      </div>
+                    </div>
+                    <div class="s-card s-card--sw">
+                      <span class="s-label">Скрывать без данных</span>
+                      <span class="s-switch is-on" role="img" aria-label="включено"><i></i></span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Вид 3: провал «Стиль» -->
+                <div class="settings__view" data-view-name="style" hidden>
+                  <div class="settings__head">
+                  <button class="s-back js-settings-back" type="button" title="Назад в общее окно"><i class="gl g16" aria-hidden="true">&#xEB9E;</i></button>
+                  <div class="settings__name settings__name--static"><span class="settings__stitle">Стиль</span></div>
+                  <div class="settings__cmds">
+                    <button class="s-btn24 s-reset-btn is-muted" type="button" title="Сбросить"><i class="gl g24 s-reset" aria-hidden="true">&#xE629;</i></button>
+                    <button class="s-ok" type="button" title="Сохранить и выйти"><i class="gl g16" aria-hidden="true">&#xE75E;</i></button>
+                    <button class="s-btn24 s-close js-settings-close" type="button" title="Закрыть"><i class="gl g24" aria-hidden="true">&#xE66C;</i></button>
+                  </div>
+                </div>
+                  <div class="settings__clouds">
+                    <div class="s-card s-card--cols" data-cloud="head">
+                      <div class="s-cols">
+                        <div class="s-col s-col--labels">
+                          <span class="s-label s-label--bold" data-prop="title">Заголовок</span>
+                          <span class="s-label s-label--pt" data-prop="font">Шрифт</span>
+                          <span class="s-label s-label--pt" data-prop="marker">Маркер</span>
+                        </div>
+                        <div class="s-col s-col--editors">
+                          <div class="s-erow" data-prop="title"><button class="color-btn" type="button" data-color-target="title" title="Выбор цвета"><i class="swatch swatch--black"></i></button><button class="s-x js-prop-off" type="button" data-prop="title" title="Скрыть"><i class="gl g16" aria-hidden="true">&#xE66C;</i></button></div>
+                          <div class="s-erow" data-prop="font"><button class="s-link" type="button">Заголовок 4</button></div>
+                          <div class="s-erow" data-prop="marker"><button class="color-btn" type="button" data-color-target="marker" title="Выбор цвета"><i class="swatch swatch--blue"></i></button><button class="s-x js-prop-off" type="button" data-prop="marker" title="Скрыть"><i class="gl g16" aria-hidden="true">&#xE66C;</i></button></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="s-card s-card--cols">
+                      <div class="s-cols">
+                        <div class="s-col s-col--labels">
+                          <span class="s-label">Фон</span>
+                          <span class="s-label" data-prop="shadow">Тень</span>
+                          <span class="s-label" data-prop="round">Скругления</span>
+                        </div>
+                        <div class="s-col s-col--editors">
+                          <div class="s-erow s-erow--bg"><button class="color-btn" type="button" data-color-target="bg" title="Выбор цвета"><i class="swatch swatch--white"></i></button><button class="s-link js-fill" id="fill-link" type="button" aria-haspopup="listbox">на всем виджете</button><button class="s-x js-color-reset" type="button" data-for="bg" title="Сбросить цвет"><i class="gl g16" aria-hidden="true">&#xE66C;</i></button></div>
+                          <div class="s-erow" data-prop="shadow">
+                            <span class="s-bubble"><i class="s-half"><b></b></i><span>#000000, 0.06</span></span><button class="s-x js-prop-off" type="button" data-prop="shadow" title="Скрыть"><i class="gl g16" aria-hidden="true">&#xE66C;</i></button>
+                          </div>
+                          <div class="s-erow s-erow--round" data-prop="round">
+                            <div class="s-roundwrap">
+                              <div class="s-field s-field--56"><svg class="ico ico--12 s-pad-ico"><use href="#i-corners"/></svg><span class="s-num">8</span></div>
+                              <button class="s-corners-btn" type="button" title="Скругления по углам"><i class="gl g24" aria-hidden="true">&#xE95F;</i></button>
+                            </div>
+                            <button class="s-x js-prop-off" type="button" data-prop="round" title="Скрыть"><i class="gl g16" aria-hidden="true">&#xE66C;</i></button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="s-chips" id="s-chips"><button class="s-chip" type="button">Иконка</button><button class="s-chip" type="button">Границы</button></div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Выпадающий список высоты -->
+              <div class="heightmenu" id="height-menu" role="listbox" aria-label="Высота" hidden><button class="hm-item" type="button" role="option" data-value="Фиксированная">Фиксированная</button><button class="hm-item" type="button" role="option" data-value="По контенту">По контенту</button><button class="hm-item" type="button" role="option" data-value="По контенту с ограничениями">По контенту с ограничениями</button><button class="hm-item is-active" type="button" role="option" data-value="Заполнить">Заполнить</button></div>
+
+              <!-- Окно выбора стиля виджета (Figma 10622:94068) -->
+              <div class="stylemenu" id="style-menu" role="dialog" aria-label="Стиль виджета" hidden>
+                <div class="sm-col">
+                  <button class="sm-card" type="button" data-style="inside" data-name="Заголовок внутри виджета"><span class="sm-mini sm-mini--inside"><i class="sm-bg"></i><b class="sm-title">Заголовок внутри виджета</b><span class="sm-text">Базовое оформление дашбордных виджетов с включенным маркером</span><i class="sm-marker"></i></span></button>
+                  <button class="sm-card" type="button" data-style="outside" data-name="Заголовок снаружи виджета"><span class="sm-mini sm-mini--outside"><i class="sm-bg"></i><b class="sm-title">Заголовок снаружи виджета</b><span class="sm-text">Заголовок находится вне контентной области виджета, на которой задан фон</span></span></button>
+                </div>
+                <div class="sm-col">
+                  <button class="sm-card" type="button" data-style="notitle" data-name="Виджет без заголовка"><span class="sm-mini sm-mini--notitle"><i class="sm-bg"></i><span class="sm-text">Виджет без заголовка, но цветной подложкой из заготовленной палитры</span></span></button>
+                  <button class="sm-card" type="button" data-style="plain" data-name="Виджет без фона и заголовка"><span class="sm-mini sm-mini--plain"><span class="sm-text">Виджет без фона и заголовка, весь фокус на контенте</span></span></button>
+                </div>
+                <button class="sm-close" type="button" title="Закрыть"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"><path d="M2 2l8 8M10 2l-8 8"/></svg></button>
+              </div>
+
+              <!-- Окно «Заливка фоном» -->
+              <div class="fillmenu" id="fill-menu" role="listbox" aria-label="Заливка фоном" hidden>
+                <div class="fm-head"><span>Заливка фоном</span><button class="fm-close" type="button" title="Закрыть"><i class="gl g24" aria-hidden="true">&#xE66C;</i></button></div>
+                <button class="hm-item is-active" type="button" role="option" data-fill="all" data-text="на всем виджете">На всем виджете</button>
+                <button class="hm-item" type="button" role="option" data-fill="content" data-text="только на контенте">Только на контенте</button>
+              </div>
+
+              <!-- Окно выбора цвета (Figma 10404:97804) -->
+              <section class="colorwin" id="color-window" role="dialog" aria-label="Выбор цвета" hidden>
+                <div class="cw-head">
+                  <span class="cw-title" id="cw-title">Фон</span>
+                  <div class="cw-tumbler" role="tablist">
+                    <span class="cw-seg is-active" role="tab" aria-selected="true">Цвет</span>
+                    <button class="cw-seg" type="button" role="tab" aria-selected="false">Картинка</button>
+                  </div>
+                  <div class="cw-cmds">
+                    <button class="cw-eyedropper" type="button" title="Пипетка"><svg class="ico ico--16"><use href="#i-eyedropper"/></svg></button>
+                    <button class="s-btn24 s-reset-btn js-color-reset-draft" type="button" title="Сбросить"><i class="gl g24 s-reset" aria-hidden="true">&#xE629;</i></button>
+                    <button class="s-ok js-color-done" type="button" title="Сохранить и выйти"><i class="gl g16" aria-hidden="true">&#xE75E;</i></button>
+                    <button class="s-btn24 s-close js-color-close" type="button" title="Закрыть"><i class="gl g24" aria-hidden="true">&#xE66C;</i></button>
+                  </div>
+                </div>
+                <div class="cw-body">
+                  <div class="cw-cloud cw-code">
+                    <span class="cw-picked" id="cw-picked"></span>
+                    <div class="cw-fields">
+                      <div class="cw-f cw-f--hex"><span>HEX</span><i class="gl g16 cw-chev" aria-hidden="true">&#xE9AA;</i></div>
+                      <div class="cw-f cw-f--code" id="cw-code">#FFFFFF</div>
+                      <div class="cw-f cw-f--op"><span id="cw-op">100</span></div><span class="cw-pct">%</span>
+                    </div>
+                  </div>
+                  <div class="cw-cloud cw-palette">
+                    <div class="cw-swatches" id="cw-swatches"></div>
+                    <hr class="cw-hr">
+                    <div class="cw-links"><button type="button">Другой цвет</button><button type="button" class="cw-link-bg">Градиент</button><button type="button" class="cw-link-bg">Текстура</button></div>
+                  </div>
+                </div>
+              </section>
+
+              <i class="handle handle--t"></i>
+              <i class="handle handle--r"></i>
+              <i class="handle handle--b"></i>
+              <i class="handle handle--l"></i>
+
+              <div class="w-toolbar" role="toolbar" aria-label="Действия с виджетом">
+                <button class="w-toolbar__btn" type="button" title="Назад"><i class="gl g24" aria-hidden="true">&#xE9A9;</i></button>
+                <button class="w-toolbar__btn" id="btn-settings" type="button" title="Общее окно настроек виджета" aria-haspopup="dialog" aria-expanded="false" aria-controls="settings-panel"><i class="gl g24" aria-hidden="true">&#xE75D;</i></button>
+                <button class="w-toolbar__btn" type="button" title="Переместить"><i class="gl g24" aria-hidden="true">&#xE63E;</i></button>
+                <button class="w-toolbar__btn is-danger" type="button" title="Удалить"><i class="gl g24" aria-hidden="true">&#xEB72;</i></button>
+                <button class="w-toolbar__btn" type="button" title="Ещё"><i class="gl g24" aria-hidden="true">&#xEAB4;</i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="row row--bottom">
+            <div class="widget widget--green">
+              <div class="sk-title"><i class="sk-title__marker"></i></div>
+              <div class="sk-block"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Служебная колонка -->
+        <div class="operations">
+          <div class="operations__top"><span class="op-circle op-circle--gray"><svg class="ico ico--24"><use href="#i-gear"/></svg></span></div>
+          <div class="operations__bottom">
+            <span class="op-circle"><svg class="ico ico--20"><use href="#i-phone"/></svg></span>
+            <span class="op-circle"><svg class="ico ico--20"><use href="#i-chat"/></svg></span>
+          </div>
+        </div>
+
+        <!-- Правая лента -->
+        <aside class="feed">
+          <section class="card card--list">
+            <div class="feed-item"><div class="line-row"><i class="pill" style="width:109px;height:12px"></i><i class="pill" style="width:12px;height:12px"></i></div><div class="feed-item__body"><i class="sq32"></i><div class="lines"><i class="pill" style="width:117px"></i><i class="pill"></i><i class="pill"></i></div></div></div>
+            <div class="feed-item"><div class="line-row"><i class="pill" style="width:82px;height:12px"></i><i class="pill" style="width:12px;height:12px"></i></div><div class="feed-item__body"><i class="sq32"></i><div class="lines"><i class="pill" style="width:117px"></i><i class="pill"></i><i class="pill"></i></div></div></div>
+            <div class="feed-item"><div class="line-row"><i class="pill" style="width:109px;height:12px"></i><i class="pill" style="width:12px;height:12px"></i></div><div class="feed-item__body"><i class="sq32"></i><div class="lines"><i class="pill" style="width:117px"></i><i class="pill"></i><i class="pill"></i></div></div></div>
+            <div class="feed-item"><div class="line-row"><i class="pill" style="width:109px;height:12px"></i><i class="pill" style="width:12px;height:12px"></i></div><div class="feed-item__body"><i class="sq32"></i><div class="lines"><i class="pill" style="width:117px"></i><i class="pill"></i><i class="pill"></i></div></div></div>
+          </section>
+
+          <section class="card card--tiles">
+            <div class="feed-title"><i class="pill pill--title"></i><i class="feed-title__marker"></i></div>
+            <div class="tiles">
+              <div class="tile"><i class="sq72"></i><i class="pill" style="width:72px"></i></div>
+              <div class="tile"><i class="sq72"></i><i class="pill" style="width:72px"></i></div>
+              <div class="tile"><i class="sq72"></i><i class="pill" style="width:72px"></i></div>
+              <div class="tile"><i class="sq72"></i><i class="pill" style="width:72px"></i></div>
+            </div>
+          </section>
+
+          <section class="card card--media">
+            <div class="feed-title"><i class="pill pill--title"></i><i class="feed-title__marker"></i></div>
+            <div class="media">
+              <i class="sq100"></i>
+              <div class="media__text">
+                <div class="lines"><i class="pill"></i><i class="pill" style="width:91px"></i><i class="pill" style="width:91px"></i></div>
+                <i class="pill media__tail" style="width:95px"></i>
+              </div>
+            </div>
+          </section>
+        </aside>
+
+        <!-- Ручки изменения ширины -->
+        <i class="drag drag--l"></i>
+        <i class="drag drag--r"></i>
+      </div>
+    </div>
+
+    <!-- Правая панель -->
+    <nav class="sidebar" aria-label="Инструменты">
+      <div class="sidebar__items">
+        <button class="side-btn side-btn--accent" type="button" title="Добавить"><i class="gl g24" aria-hidden="true">&#xEADD;</i></button>
+        <button class="side-btn" type="button" title="Данные"><i class="gl g24" aria-hidden="true">&#xEBBC;</i></button>
+        <button class="side-btn" type="button" title="Структура"><i class="gl g24" aria-hidden="true">&#xEBF9;</i></button>
+        <button class="side-btn" type="button" title="Фильтры"><i class="gl g24" aria-hidden="true">&#xE94C;</i></button>
+        <button class="side-btn" type="button" title="Поиск"><i class="gl g24" aria-hidden="true">&#xEAA7;</i></button>
+        <button class="side-btn" type="button" title="Настройки"><i class="gl g24" aria-hidden="true">&#xEAA9;</i></button>
+      </div>
+      <button class="help-btn" type="button" title="Справка"><svg class="ico ico--24"><use href="#i-help"/></svg></button>
+    </nav>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
